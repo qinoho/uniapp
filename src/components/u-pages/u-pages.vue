@@ -40,19 +40,14 @@
     <view class="u-pages__content" :style="contentStyle">
       <slot></slot>
     </view>
-
-    <!-- 底部安全区域 -->
-    <view
-      v-if="props.showSafeAreaBottom"
-      class="u-pages__safe-area-bottom"
-      :style="safeAreaBottomStyle"
-    ></view>
   </view>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-console.log('pppppppppppppppppppppppppppp')
+import { ref, computed, onBeforeMount } from 'vue'
+import { getSystemInfoFn } from '@/utils/utils'
+import { onReachBottom } from '@dcloudio/uni-app'
+
 // 定义 Props 类型
 interface Props {
   title?: string
@@ -91,75 +86,44 @@ const emit = defineEmits<{
   refresh: []
 }>()
 
-// 响应式数据
-const systemInfo = ref<UniApp.GetSystemInfoResult>(
-  {} as UniApp.GetSystemInfoResult
-)
+// 系统信息
+let systemInfo = {}
+onBeforeMount(async () => {
+  systemInfo = await getSystemInfoFn()
+  calculateSafeArea()
+})
+
 const statusBarHeight = ref<number>(0)
 const navBarHeightValue = ref<number>(44)
 const safeAreaBottom = ref<number>(0)
 
 // 计算属性
 const pageStyle = computed(() => ({
-  backgroundColor: props.backgroundColor,
   minHeight: '100vh',
+  maxHeight: '100vh',
 }))
 
-// const statusBarStyleComputed = computed(() => ({
-//   height: statusBarHeight.value + 'px',
-//   backgroundColor: props.navBarBackgroundColor,
-// }))
-
 const navBarStyle = computed(() => ({
-  height: navBarHeightValue.value + statusBarHeight.value + 'px',
+  height: navBarHeightValue.value + 'px',
   backgroundColor: props.navBarBackgroundColor,
   color: props.navBarTextColor,
-  borderBottom: '1px solid #e5e5e5',
   paddingTop: statusBarHeight.value + 'px',
 }))
 
 const contentStyle = computed(() => {
-  const paddingTop =
-    props.showStatusBar && props.showNavBar
-      ? statusBarHeight.value + navBarHeightValue.value + 'px'
-      : props.showNavBar
-      ? navBarHeightValue.value + 'px'
-      : props.showStatusBar
-      ? statusBarHeight.value + 'px'
-      : '0px'
-
-  const paddingBottom = props.showSafeAreaBottom
-    ? safeAreaBottom.value + 'px'
-    : '0px'
-
   return {
-    paddingTop,
-    paddingBottom,
-    minHeight: `calc(100vh - ${paddingTop} - ${paddingBottom})`,
+    width: `100vw`,
+    paddingBottom: safeAreaBottom.value + 'px',
   }
 })
 
-const safeAreaBottomStyle = computed(() => ({
-  height: safeAreaBottom.value + 'px',
-  backgroundColor: props.backgroundColor,
-}))
+// const safeAreaBottomStyle = computed(() => ({
+//   height: safeAreaBottom.value + 'px',
+// }))
 
-// 方法
-const getSystemInfo = () => {
-  console.log('11111111111111111')
-  uni.getSystemInfo({
-    success: (res: UniApp.GetSystemInfoResult) => {
-      console.log('rrrrrrrrrrrrrrrrr', res)
-      systemInfo.value = res
-      calculateSafeArea(res)
-    },
-  })
-}
-
-const calculateSafeArea = (sysInfo: UniApp.GetSystemInfoResult) => {
+const calculateSafeArea = () => {
   // 状态栏高度
-  console.log('sysInfosysInfosysInfo,', sysInfo)
-  statusBarHeight.value = sysInfo.statusBarHeight || 0
+  statusBarHeight.value = systemInfo.statusBarHeight || 0
 
   // 导航栏高度
   if (props.navBarHeight) {
@@ -168,34 +132,22 @@ const calculateSafeArea = (sysInfo: UniApp.GetSystemInfoResult) => {
         ? parseInt(props.navBarHeight)
         : props.navBarHeight
   } else {
-    // 根据平台设置默认导航栏高度
-    // #ifdef APP-PLUS
-    navBarHeightValue.value = 44
-    // #endif
-    // #ifdef H5
-    navBarHeightValue.value = 44
-    // #endif
-    // #ifdef MP-WEIXIN
-    navBarHeightValue.value = 32
-    // #endif
-    // #ifdef MP-ALIPAY
-    navBarHeightValue.value = 40
-    // #endif
+    navBarHeightValue.value = systemInfo.navBarHeight
   }
 
   // 底部安全区域高度
   // #ifdef APP-PLUS
-  safeAreaBottom.value = sysInfo.safeAreaInsets
-    ? sysInfo.safeAreaInsets.bottom
+  safeAreaBottom.value = systemInfo.safeAreaInsets
+    ? systemInfo.safeAreaInsets.bottom
     : 0
   // #endif
   // #ifdef H5
   safeAreaBottom.value = 0
   // #endif
   // #ifdef MP-WEIXIN || MP-ALIPAY || MP-BAIDU || MP-TOUTIAO || MP-QQ
-  const safeArea = sysInfo.safeArea
+  const safeArea = systemInfo.safeArea
   if (safeArea) {
-    safeAreaBottom.value = sysInfo.screenHeight - safeArea.bottom
+    safeAreaBottom.value = systemInfo.screenHeight - safeArea.bottom
   }
   // #endif
 }
@@ -217,9 +169,9 @@ const onPullDownRefresh = () => {
     emit('refresh')
   }
 }
-
-// 初始化
-getSystemInfo()
+onReachBottom(() => {
+  console.log('上拉触底')
+})
 </script>
 
 <style lang="scss" scoped>
@@ -229,28 +181,13 @@ getSystemInfo()
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-
-  &__status-bar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 998;
-  }
+  box-sizing: content-box;
 
   &__nav-bar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 999;
     display: flex;
     align-items: center;
     padding: 0 16px;
     box-sizing: border-box;
-
-    // 适配状态栏
-    padding-top: var(--status-bar-height, 0);
   }
 
   &__nav-content {
@@ -309,17 +246,15 @@ getSystemInfo()
   }
 
   &__content {
-    flex: 1;
     width: 100%;
     box-sizing: border-box;
+    flex: 1;
+    min-height: 0;
+    overflow-y: scroll;
   }
 
   &__safe-area-bottom {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    z-index: 1;
+    width: 100%;
   }
 }
 
@@ -347,7 +282,7 @@ getSystemInfo()
 .u-pages {
   &__nav-bar {
     // 微信小程序样式调整
-    border-bottom: 1px solid #e5e5e5;
+    border: none;
   }
 
   &__back-icon {

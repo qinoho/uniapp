@@ -1,9 +1,33 @@
 {
-	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+	"pages": [
 		{
 			"path": "pages/index/index",
 			"style": {
 				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/scroll-demo/scroll-demo",
+			"style": {
+				"navigationBarTitleText": "滚动测试"
+			}
+		},
+		{
+			"path": "pages/comparison-demo/comparison-demo",
+			"style": {
+				"navigationBarTitleText": "下拉刷新对比"
+			}
+		},
+		{
+			"path": "pages/pull-refresh-test/pull-refresh-test",
+			"style": {
+				"navigationBarTitleText": "下拉刷新测试"
+			}
+		},
+		{
+			"path": "pages/damping-test/damping-test",
+			"style": {
+				"navigationBarTitleText": "阻尼效果测试"
 			}
 		}
 	],

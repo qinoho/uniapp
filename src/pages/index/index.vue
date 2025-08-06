@@ -27,7 +27,31 @@
         <text class="card-item">✅ Setup 语法</text>
         <text class="card-item">✅ 编译器宏支持</text>
       </view>
-
+      <view class="info-card">
+        <text class="card-title">组件信息</text>
+        <text class="card-item">✅ TypeScript 支持</text>
+        <text class="card-item">✅ Vue 3 Composition API</text>
+        <text class="card-item">✅ Setup 语法</text>
+        <text class="card-item">✅ 编译器宏支持</text> </view
+      ><view class="info-card">
+        <text class="card-title">组件信息</text>
+        <text class="card-item">✅ TypeScript 支持</text>
+        <text class="card-item">✅ Vue 3 Composition API</text>
+        <text class="card-item">✅ Setup 语法</text>
+        <text class="card-item">✅ 编译器宏支持</text> </view
+      ><view class="info-card">
+        <text class="card-title">组件信息</text>
+        <text class="card-item">✅ TypeScript 支持</text>
+        <text class="card-item">✅ Vue 3 Composition API</text>
+        <text class="card-item">✅ Setup 语法</text>
+        <text class="card-item">✅ 编译器宏支持</text> </view
+      ><view class="info-card">
+        <text class="card-title">组件信息</text>
+        <text class="card-item">✅ TypeScript 支持</text>
+        <text class="card-item">✅ Vue 3 Composition API</text>
+        <text class="card-item">✅ Setup 语法</text>
+        <text class="card-item">✅ 编译器宏支持</text>
+      </view>
       <view class="info-card">
         <text class="card-title">功能测试</text>
         <button class="test-btn" @click="testSystemInfo">获取系统信息</button>
