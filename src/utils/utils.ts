@@ -88,3 +88,114 @@ export function rpxToPxSync(rpxValue: number, px: number): number {
 export function pxToRpxSync(pxValue: number, rpx: number): number {
   return pxValue * rpx
 }
+
+/**
+ * 防抖函数
+ * @param func 要防抖的函数
+ * @param delay 延迟时间（毫秒）
+ * @param immediate 是否立即执行
+ * @returns 防抖后的函数
+ */
+export function debounce<T extends (...args: any[]) => any>(
+  func: T,
+  delay: number,
+  immediate: boolean = false
+): (...args: Parameters<T>) => void {
+  let timeoutId: number | null = null
+  let isInvokedImmediate = false
+
+  return function (this: any, ...args: Parameters<T>) {
+    const callNow = immediate && !isInvokedImmediate
+
+    // 清除之前的定时器
+    if (timeoutId !== null) {
+      clearTimeout(timeoutId)
+    }
+
+    if (callNow) {
+      // 立即执行
+      func.apply(this, args)
+      isInvokedImmediate = true
+    }
+
+    // 设置新的定时器
+    timeoutId = setTimeout(() => {
+      if (!immediate) {
+        func.apply(this, args)
+      }
+      isInvokedImmediate = false
+      timeoutId = null
+    }, delay)
+  }
+}
+
+/**
+ * 节流函数
+ * @param func 要节流的函数
+ * @param delay 节流间隔时间（毫秒）
+ * @param options 配置选项
+ * @returns 节流后的函数
+ */
+export function throttle<T extends (...args: any[]) => any>(
+  func: T,
+  delay: number,
+  options: {
+    leading?: boolean // 是否在开始时执行
+    trailing?: boolean // 是否在结束时执行
+  } = {}
+): (...args: Parameters<T>) => void {
+  const { leading = true, trailing = true } = options
+  let timeoutId: number | null = null
+  let lastExecTime = 0
+  let lastArgs: Parameters<T> | null = null
+  let lastThis: any = null
+
+  const execute = () => {
+    lastExecTime = Date.now()
+    timeoutId = null
+    if (lastArgs) {
+      func.apply(lastThis, lastArgs)
+      lastArgs = null
+      lastThis = null
+    }
+  }
+
+  return function (this: any, ...args: Parameters<T>) {
+    const now = Date.now()
+    const timeSinceLastExec = now - lastExecTime
+
+    lastArgs = args
+    lastThis = this
+
+    if (timeSinceLastExec >= delay) {
+      // 如果距离上次执行已经超过延迟时间
+      if (leading) {
+        execute()
+      } else {
+        lastExecTime = now
+        if (trailing && timeoutId === null) {
+          timeoutId = setTimeout(execute, delay)
+        }
+      }
+    } else {
+      // 如果还在延迟时间内
+      if (trailing && timeoutId === null) {
+        const remainingTime = delay - timeSinceLastExec
+        timeoutId = setTimeout(execute, remainingTime)
+      }
+    }
+  }
+}
+
+/**
+ * 简化版节流函数（常用于滚动事件）
+ * @param func 要节流的函数
+ * @param delay 节流间隔时间（毫秒），默认16ms（约60fps）
+ * @returns 节流后的函数
+ */
+export function throttleScroll<T extends (...args: any[]) => any>(
+  func: T,
+  delay: number = 16
+): (...args: Parameters<T>) => void {
+  return throttle(func, delay, { leading: true, trailing: true })
+}

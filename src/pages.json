@@ -5,30 +5,6 @@
 			"style": {
 				"navigationStyle": "custom"
 			}
-		},
-		{
-			"path": "pages/scroll-demo/scroll-demo",
-			"style": {
-				"navigationBarTitleText": "滚动测试"
-			}
-		},
-		{
-			"path": "pages/comparison-demo/comparison-demo",
-			"style": {
-				"navigationBarTitleText": "下拉刷新对比"
-			}
-		},
-		{
-			"path": "pages/pull-refresh-test/pull-refresh-test",
-			"style": {
-				"navigationBarTitleText": "下拉刷新测试"
-			}
-		},
-		{
-			"path": "pages/damping-test/damping-test",
-			"style": {
-				"navigationBarTitleText": "阻尼效果测试"
-			}
 		}
 	],
 	"globalStyle": {

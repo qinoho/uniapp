@@ -1,7 +1,6 @@
 <template>
   <view class="u-scroll-view" :style="containerStyle">
     <!-- 自定义下拉刷新区域 (仅在有自定义插槽时显示) -->
-
     <view
       v-if="hasCustomRefresh"
       class="u-scroll-view__refresh"
@@ -23,7 +22,7 @@
     <scroll-view
       class="u-scroll-view__scroll"
       :style="scrollStyle"
-      scroll-y
+      :scroll-y="scrollEnabled"
       :scroll-top="scrollTop"
       :enable-back-to-top="enableBackToTop"
       :scroll-with-animation="scrollWithAnimation"
@@ -37,6 +36,7 @@
       @touchstart="handleTouchStart"
       @touchmove="handleTouchMove"
       @touchend="handleTouchEnd"
+      @touchcancel="handleTouchEnd"
     >
       <!-- 内容区域 -->
 
@@ -69,6 +69,7 @@
 
 <script setup lang="ts">
 import { ref, computed, nextTick, useSlots } from 'vue'
+import { throttleScroll } from '@/utils/utils'
 
 // 定义类型
 export type RefreshStatus = 'none' | 'pulling' | 'release' | 'loading'
@@ -156,7 +157,11 @@ const touchStartTime = ref(0)
 
 // 计算属性
 const containerStyle = computed(() => ({
-  height: typeof props.height === 'number' ? `${props.height}px` : props.height,
+  height: props.height
+    ? typeof props.height === 'number'
+      ? `${props.height}px`
+      : props.height
+    : 'auto',
   backgroundColor: props.backgroundColor,
 }))
 
@@ -170,25 +175,101 @@ const useNativeRefresh = computed(() => {
   return props.enableRefresh && !hasCustomRefresh.value
 })
 
-const refreshStyle = computed(() => ({
-  transform: `translateY(-calc(50%+${Math.max(
-    0,
-    props.refreshThreshold - pullDistance.value
-  )}px))`,
-  opacity: refreshStatus.value === 'none' ? 0 : 1,
-}))
-// `translateY(calc(-100% - 10px));`
-const scrollStyle = computed(() => ({
-  height: '100%',
-  transform:
-    hasCustomRefresh.value && pullDistance.value > 0
-      ? `translateY(${Math.min(pullDistance.value, props.refreshThreshold)}px)`
-      : 'translateY(0)',
-  transition:
-    refreshStatus.value === 'none' && !isPulling.value
-      ? 'transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
-      : 'none',
-}))
+// 计算阻尼显示高度
+const dampedPullHeight = computed(() => {
+  const threshold = props.refreshThreshold
+  const actualDistance = pullDistance.value
+
+  if (actualDistance <= 0) return 0
+
+  // 使用平滑的阻尼函数计算显示高度
+  if (actualDistance <= threshold) {
+    // 阈值内：线性阻尼 0.6
+    return actualDistance * 0.6
+  } else {
+    // 超过阈值：渐进阻尼，避免跳动
+    const baseHeight = threshold * 0.6
+    const extraDistance = actualDistance - threshold
+    const extraHeight = extraDistance * 0.3
+
+    return Math.min(baseHeight + extraHeight, threshold * 0.8)
+  }
+})
+
+const refreshStyle = computed(() => {
+  // 在加载状态时，确保刷新区域完全显示
+  const displayHeight = dampedPullHeight.value
+
+  return {
+    transform: `translateY(calc(-100% + ${displayHeight}px))`,
+    opacity: refreshStatus.value === 'none' ? 0 : 1,
+    transition: getRefreshTransition(),
+    zIndex: refreshStatus.value === 'loading' ? 20 : 10, // 加载时提高层级
+  }
+})
+
+// 获取刷新区域的过渡动画
+const getRefreshTransition = () => {
+  // 下拉过程中不使用动画
+  if (refreshStatus.value === 'pulling' || isPulling.value) {
+    return 'none'
+  }
+
+  // 加载状态时使用较快的动画
+  if (refreshStatus.value === 'loading') {
+    return 'transform 0.2s ease-out, opacity 0.2s ease-out'
+  }
+
+  // 完成后使用较慢的动画，确保平滑隐藏
+  return 'transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 1s ease-out'
+}
+// 控制滚动能力
+const scrollEnabled = computed(() => {
+  // 如果正在下拉刷新，禁用滚动
+  if (hasCustomRefresh.value && isPulling.value && pullDistance.value > 0) {
+    return false
+  }
+  return true
+})
+
+const scrollStyle = computed(() => {
+  // 计算 scroll-view 的偏移距离
+  const getScrollOffset = () => {
+    if (!hasCustomRefresh.value || pullDistance.value <= 0) {
+      return 0
+    }
+
+    // 在加载状态时，保持固定偏移
+    if (refreshStatus.value === 'loading') {
+      return props.refreshThreshold * 0.6 // 与刷新区域高度一致
+    }
+
+    return dampedPullHeight.value
+  }
+
+  return {
+    height: '100%',
+    transform: `translateY(${getScrollOffset()}px)`,
+    transition: getScrollTransition(),
+    overflowY: scrollEnabled.value ? 'auto' : 'hidden',
+  }
+})
+
+// 获取滚动容器的过渡动画
+const getScrollTransition = () => {
+  // 下拉过程中不使用动画
+  if (refreshStatus.value === 'pulling' || isPulling.value) {
+    return 'none'
+  }
+
+  // 加载状态时使用与刷新区域同步的动画
+  if (refreshStatus.value === 'loading') {
+    return 'transform 0.2s ease-out'
+  }
+
+  // 完成后使用较慢的动画，与刷新区域同步
+  return 'transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+}
 
 const contentStyle = computed(() => ({
   padding: props.contentPadding,
@@ -256,23 +337,13 @@ const handleTouchMove = (e: TouchEvent) => {
   if (scrollTopValue.value <= 0 && deltaY > 0) {
     isPulling.value = true
 
-    // 阻止默认滚动行为
+    // 强制阻止默认滚动行为和事件冒泡
     e.preventDefault()
+    e.stopPropagation()
+    e.stopImmediatePropagation()
 
-    // 计算下拉距离，使用平滑的阻尼函数避免跳动
-    const threshold = props.refreshThreshold
-
-    // 使用连续的阻尼函数，避免在阈值处产生跳动
-    // 采用指数衰减函数实现平滑过渡
-    const dampingFactor = 0.6
-    const maxDistance = threshold * 1.5
-
-    // 使用 tanh 函数实现平滑阻尼，避免突变
-    const normalizedDelta = deltaY / threshold
-    const dampedRatio = Math.tanh(normalizedDelta * 0.8) * dampingFactor
-    const calculatedDistance = threshold * dampedRatio
-
-    pullDistance.value = Math.min(calculatedDistance, maxDistance)
+    // pullDistance 保持为实际下拉距离
+    pullDistance.value = deltaY
     // 更新刷新状态
     if (pullDistance.value >= props.refreshThreshold) {
       refreshStatus.value = 'release'
@@ -282,6 +353,10 @@ const handleTouchMove = (e: TouchEvent) => {
   } else if (isPulling.value && deltaY <= 0) {
     // 如果正在下拉但现在向上滑动，重置状态
     resetPullState()
+  } else if (isPulling.value) {
+    // 如果正在下拉过程中，继续阻止默认行为
+    e.preventDefault()
+    e.stopPropagation()
   }
 }
 
@@ -308,17 +383,17 @@ const resetPullState = () => {
   isPulling.value = false
 }
 
-// 滚动事件处理
-const handleScroll = (e: any) => {
+// 原始滚动事件处理函数
+const handleScrollOriginal = (e: any) => {
   scrollTopValue.value = e.detail.scrollTop
   emit('scroll', e)
 }
 
-const handleScrollToUpper = (e: any) => {
+const handleScrollToUpperOriginal = (e: any) => {
   emit('scrolltoupper', e)
 }
 
-const handleScrollToLower = (e: any) => {
+const handleScrollToLowerOriginal = (e: any) => {
   if (
     props.enableLoadMore &&
     loadMoreStatus.value === 'more' &&
@@ -328,6 +403,11 @@ const handleScrollToLower = (e: any) => {
   }
   emit('scrolltolower', e)
 }
+
+// 节流版本的滚动事件处理函数
+const handleScroll = throttleScroll(handleScrollOriginal, 16) // 60fps
+const handleScrollToUpper = throttleScroll(handleScrollToUpperOriginal, 100) // 上拉事件节流100ms
+const handleScrollToLower = throttleScroll(handleScrollToLowerOriginal, 200) // 下拉加载节流200ms
 
 // 刷新相关方法
 const triggerRefresh = async () => {
@@ -343,16 +423,24 @@ const triggerRefresh = async () => {
 }
 
 const finishRefresh = () => {
-  isRefreshing.value = false
-
   if (useNativeRefresh.value) {
     // 原生刷新完成
+    isRefreshing.value = false
     nativeRefreshTriggered.value = false
   } else {
-    // 自定义刷新完成，添加延迟让用户看到完成状态
+    // 自定义刷新完成
+    isRefreshing.value = false
+
+    // 先保持加载状态一小段时间，让用户看到完成状态
     setTimeout(() => {
-      resetPullState()
-    }, 300)
+      // 然后开始隐藏动画
+      refreshStatus.value = 'none'
+
+      // 等待动画完成后重置所有状态
+      setTimeout(() => {
+        resetPullState()
+      }, 200) // 与动画时间同步
+    }, 200) // 短暂显示完成状态
   }
 }
 
@@ -381,9 +469,6 @@ defineExpose({
   finishRefresh,
   finishLoadMore,
   resetLoadMore,
-  scrollToTop: () => {
-    scrollTopValue.value = 0
-  },
 })
 </script>
 
@@ -392,7 +477,7 @@ defineExpose({
   position: relative;
   width: 100%;
   overflow: hidden;
-
+  max-height: 100%;
   &__refresh {
     position: absolute;
     top: 0;
@@ -405,6 +490,19 @@ defineExpose({
     background-color: #f8f9fa;
     transform: translateY(-100%);
     transition: opacity 0.2s ease;
+
+    &--active {
+      opacity: 1;
+    }
+
+    &--pulling {
+      transition: none;
+    }
+
+    &--loading {
+      z-index: 20; // 加载时提高层级，确保不被覆盖
+      transition: transform 0.2s ease-out, opacity 0.2s ease-out;
+    }
   }
 
   &__scroll {
@@ -425,7 +523,7 @@ defineExpose({
     background-color: transparent;
 
     &--loading {
-      background-color: #f8f9fa;
+      background-color: transparent;
     }
 
     &--nomore {
