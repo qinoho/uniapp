@@ -565,42 +565,29 @@ defineExpose({
 // 平台适配
 // #ifdef APP-PLUS
 .u-scroll-view {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
   &__refresh {
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
+  }
+  &__scroll {
+    width: 100%;
+    flex: 1;
+    height: 0; // 关键：让 flex 子元素正确计算高度
   }
 }
 // #endif
 
 // #ifdef H5
 .u-scroll-view {
+  max-height: 100% !important;
+  height: auto !important;
   &__scroll {
     -webkit-overflow-scrolling: touch;
   }
 }
 // #endif
-
-// 暗黑模式适配
-@media (prefers-color-scheme: dark) {
-  .u-scroll-view {
-    &__refresh {
-      background-color: #1c1c1e;
-    }
-
-    &__refresh-text,
-    &__loadmore-text {
-      color: #ffffff;
-    }
-
-    &__refresh-icon {
-      color: #ffffff;
-    }
-
-    &__loading-spinner {
-      border-color: #3a3a3c;
-      border-top-color: #007aff;
-    }
-  }
-}
 </style>
 

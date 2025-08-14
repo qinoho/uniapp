@@ -1,12 +1,21 @@
 <template>
   <view class="u-pages">
     <!-- 主要内容区域 -->
-    <u-nav-header v-bind="navBarObj"></u-nav-header>
+    <uni-nav-header v-bind="navBarObj"></uni-nav-header>
     <view class="u-pages__content" :style="contentStyle">
-      <u-scroll-view style="flex-basis: 100%;" :enable-load-more="false">
+      <uni-scroll-view :enable-load-more="true" @loadmore="scrolltoupper">
         <slot></slot>
         <view class="safe_bottom_area" :style="safeBottomStyle"></view>
-      </u-scroll-view>
+      </uni-scroll-view>
+      <!-- <view style="flex: 1; height: 0; flex-basis: 0">
+        <scroll-view
+          scroll-y
+          style="height: 100%"
+          @scrolltolower="scrolltoupper"
+        >
+         
+        </scroll-view>
+      </view> -->
     </view>
   </view>
 </template>
@@ -14,7 +23,11 @@
 <script setup lang="ts">
 import { ref, computed, onBeforeMount } from 'vue'
 import { getSystemInfoFn } from '@/utils/utils'
-
+const scrolltoupper = () => {
+  console.log(
+    '1111111111111111aaaaaaaaaaa======================================'
+  )
+}
 interface Props {
   title?: string
   showBack?: boolean
@@ -79,16 +92,16 @@ const calculateSafeArea = async () => {
   width: 100vw;
   min-height: 100vh;
   max-height: 100vh;
+  height: 100dvh;
   display: flex;
   flex-direction: column;
-  box-sizing: content-box;
   overflow: hidden;
   &__content {
-    background-color: orange;
     flex: 1;
     min-height: 0;
     height: 0;
     display: flex;
+    flex-basis: 0;
   }
 }
 </style>

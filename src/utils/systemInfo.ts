@@ -41,7 +41,7 @@ export function getMenuButtonBoundingClientRect(): MenuButtonInfo {
   // 非微信小程序环境返回默认值（APP-PLUS环境下，胶囊按钮信息获取失败，返回默认值）
   return {
     width: 0,
-    height: 88,
+    height: 0,
     top: 0,
     right: 0,
     bottom: 0,

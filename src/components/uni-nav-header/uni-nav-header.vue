@@ -27,6 +27,7 @@
 <script setup lang="ts">
 import { ref, computed, onBeforeMount } from 'vue'
 import { getSystemInfoFn } from '@/utils/utils'
+import type { SystemInfoInterface } from '@/utils/utils'
 // import { getCurrentPages } from '@dcloudio/uni-app'
 
 // 定义 Props 类型
@@ -54,7 +55,7 @@ const emit = defineEmits<{
 }>()
 
 // 系统信息
-let systemInfo = {}
+let systemInfo = {} as SystemInfoInterface
 onBeforeMount(async () => {
   systemInfo = await getSystemInfoFn()
   calculateSafeArea()
@@ -63,6 +64,7 @@ onBeforeMount(async () => {
 // 计算属性
 const navBarStyle = computed(() => ({
   height: navBarHeightValue.value + 'px',
+  minHeight: navBarHeightValue.value + 'px',
   backgroundColor: props.backgroundColor,
   paddingTop: statusBarHeight.value + 'px',
 }))
@@ -103,6 +105,7 @@ const handleBack = () => {
   right: 0;
   z-index: 999;
   box-sizing: border-box;
+  flex-shrink: 0;
   &-content {
     display: flex;
     align-items: center;

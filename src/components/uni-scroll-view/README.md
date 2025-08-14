@@ -21,7 +21,7 @@
 
 ```vue
 <template>
-  <u-scroll-view
+  <uni-scroll-view
     ref="scrollViewRef"
     :height="'100vh'"
     @refresh="onRefresh"
@@ -30,7 +30,7 @@
     <view v-for="item in list" :key="item.id" class="item">
       {{ item.title }}
     </view>
-  </u-scroll-view>
+  </uni-scroll-view>
 </template>
 
 <script setup>
@@ -69,7 +69,7 @@ const onLoadMore = async () => {
 
 ```vue
 <template>
-  <u-scroll-view @refresh="onRefresh">
+  <uni-scroll-view @refresh="onRefresh">
     <template #refresh="{ status, distance }">
       <view class="custom-refresh">
         <view v-if="status === 'pulling'" class="custom-icon">
@@ -87,7 +87,7 @@ const onLoadMore = async () => {
 
     <!-- 内容 -->
     <view>Your content here</view>
-  </u-scroll-view>
+  </uni-scroll-view>
 </template>
 ```
 

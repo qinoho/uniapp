@@ -1,7 +1,7 @@
 import { getSystemInfo, getMenuButtonBoundingClientRect } from './systemInfo'
 
 // 系统参数接口
-interface SystemInfoInterface {
+export interface SystemInfoInterface {
   px: number // rpx换算px的比例
   rpx: number // px换算rpx的比例
   scrollHeight: number // 可使用窗口高度
@@ -44,9 +44,11 @@ export async function getSystemInfoFn(): Promise<SystemInfoInterface> {
 
     // 计算顶部导航高度
     const navBarHeight =
-      (menuButtonInfo.top - Number(systemInfo.statusBarHeight)) * 2 +
-      menuButtonInfo.height +
-      Number(systemInfo.statusBarHeight)
+      menuButtonInfo.height > 0
+        ? (menuButtonInfo.top - Number(systemInfo.statusBarHeight)) * 2 +
+          menuButtonInfo.height +
+          Number(systemInfo.statusBarHeight)
+        : Number(systemInfo.statusBarHeight) + 44
 
     return {
       px,
