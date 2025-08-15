@@ -2,15 +2,7 @@
 	"pages": [
 		{
 			"path": "pages/index/index",
-			"style": {
-				"navigationStyle": "custom"
-			}
-		},
-		{
-			"path": "pages/move/movable-demo",
-			"style": {
-				"navigationBarTitleText": "Movable 演示"
-			}
+			"style": {}
 		}
 	],
 	"globalStyle": {

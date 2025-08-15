@@ -1,133 +1,7 @@
 <template>
-  <view
-    v-if="0"
-    class="test"
-    style="display: flex; flex-direction: column; height: 100vh"
-  >
-    <view
-      class="top"
-      style="height: 40px; background-color: bisque; flex-shrink: 0"
-      >biaoti</view
-    >
-    <view
-      class="scroll"
-      style="height: 0; flex: 1; background-color: aquamarine"
-    >
-      <scroll-view
-        style="height: 100%; display: flex"
-        scroll-y
-        @scrolltolower="scrolltoupper"
-      >
-        测试<br />
-        测试<br />
-        测试<br />
-        测试<br />
-        测试<br />
-        测试<br />
-        测试<br />
-        测试<br />
-        测试<br />
-        测试<br />
-        测试<br />
-        测试<br />
-        测试<br />
-        测试<br />
-        测试<br />
-        测试<br />
-        测试<br />
-        测试<br />
-        测试<br />
-        测试<br />
-        测试<br />
-        测试<br />
-        测试<br />
-        测试<br />
-        测试<br />
-        测试<br />
-        测试<br />
-        测试<br />
-        测试<br />
-        测试<br />
-        测试<br />
-        测试<br />
-        测试<br />
-        测试<br />
-        测试<br />
-        测试<br />
-        测试<br />
-        测试<br />
-        测试<br />
-        测试<br />
-        测试<br />
-        测试<br />
-        测试<br />
-        测试<br />
-        测试<br />
-        测试<br />
-        测试<br />
-        测试<br />
-        测试<br />
-        测试<br />
-        测试<br />
-        测试<br />
-        测试<br />
-        测试<br />
-        测试<br />
-        测试<br />
-        测试<br />
-        测试<br />
-        测试<br />
-        测试<br />
-        测试<br />
-        测试<br />
-        测试<br />
-        123
-      </scroll-view>
-    </view>
-  </view>
-
-  <uni-pages v-if="1">
-    sadadsadsadad 这是哥页面 这是哥页面 这是哥页面 这是哥页面 这是哥页面
-    这是哥页面 这是哥页面 这是哥页面 这是哥页面 这是哥页面 这是哥页面 这是哥页面
-    这是哥页面 这是哥页面 这是哥页面 这是哥页面 这是哥页面 这是哥页面 这是哥页面
-    <br />adsadsd阿萨打撒打撒打撒 <br />adsadsd阿萨打撒打撒打撒
-    <br />adsadsd阿萨打撒打撒打撒 <br />adsadsd阿萨打撒打撒打撒
-    <br />adsadsd阿萨打撒打撒打撒 <br />adsadsd阿萨打撒打撒打撒
-    <br />adsadsd阿萨打撒打撒打撒 <br />adsadsd阿萨打撒打撒打撒
-    <br />adsadsd阿萨打撒打撒打撒 <br />adsadsd阿萨打撒打撒打撒
-    <br />adsadsd阿萨打撒打撒打撒 <br />adsadsd阿萨打撒打撒打撒
-    <br />adsadsd阿萨打撒打撒打撒 <br />adsadsd阿萨打撒打撒打撒
-    <br />adsadsd阿萨打撒打撒打撒 <br />adsadsd阿萨打撒打撒打撒
-    <br />adsadsd阿萨打撒打撒打撒 <br />adsadsd阿萨打撒打撒打撒
-    <br />adsadsd阿萨打撒打撒打撒 <br />adsadsd阿萨打撒打撒打撒
-    <br />adsadsd阿萨打撒打撒打撒 <br />adsadsd阿萨打撒打撒打撒
-    <br />adsadsd阿萨打撒打撒打撒 <br />adsadsd阿萨打撒打撒打撒
-    <br />adsadsd阿萨打撒打撒打撒 <br />adsadsd阿萨打撒打撒打撒
-    <br />adsadsd阿萨打撒打撒打撒 <br />adsadsd阿萨打撒打撒打撒
-    <br />adsadsd阿萨打撒打撒打撒 <br />adsadsd阿萨打撒打撒打撒
-    <br />adsadsd阿萨打撒打撒打撒 <br />adsadsd阿萨打撒打撒打撒
-    <br />adsadsd阿萨打撒打撒打撒 <br />adsadsd阿萨打撒打撒打撒
-    <br />adsadsd阿萨打撒打撒打撒 <br />adsadsd阿萨打撒打撒打撒
-    <br />adsadsd阿萨打撒打撒打撒 <br />adsadsd阿萨打撒打撒打撒
-    <br />adsadsd阿萨打撒打撒打撒 <br />adsadsd阿萨打撒打撒打撒
-    <br />adsadsd阿萨打撒打撒打撒 <br />adsadsd阿萨打撒打撒打撒
-    <br />adsadsd阿萨打撒打撒打撒 <br />adsadsd阿萨打撒打撒打撒
-    <br />adsadsd阿萨打撒打撒打撒 <br />adsadsd阿萨打撒打撒打撒
-    <br />adsadsd阿萨打撒打撒打撒 <br />adsadsd阿萨打撒打撒打撒
-    <br />adsadsd阿萨打撒打撒打撒 <br />adsadsd阿萨打撒打撒打撒
-    <br />adsadsd阿萨打撒打撒打撒 <br />adsadsd阿萨打撒打撒打撒
-    <br />adsadsd阿萨打撒打撒打撒 <br />adsadsd阿萨打撒打撒打撒
-    <br />adsadsd阿萨打撒打撒打撒 <br />adsadsd阿萨打撒打撒打撒
-    <br />adsadsd阿萨打撒打撒打撒 <br />adsadsd阿萨打撒打撒打撒
-    <br />adsadsd阿萨打撒打撒打撒 <br />adsadsd阿萨打撒打撒打撒
-    <br />adsadsd阿萨打撒打撒打撒 <br />adsadsd阿萨打撒打撒打撒
-    <br />adsadsd阿萨打撒打撒打撒 <br />adsadsd阿萨打撒打撒打撒
-    <br />adsadsd阿萨打撒打撒打撒 <br />adsadsd阿萨打撒打撒打撒
-    <br />adsadsd阿萨打撒打撒打撒 <br />adsadsd阿萨打撒打撒打撒
-    <br />adsadsd阿萨打撒打撒打撒 <br />adsadsd阿萨打撒打撒打撒
-    <br />adsadsd阿萨打撒打撒打撒 <br />adsadsd阿萨打撒打撒打撒
-    <br />adsadsd阿萨打撒打撒打撒 <br />adsadsd阿萨打撒打撒打撒
-  </uni-pages>
+  <!-- <view class="bg" style="overflow: hidden; display: flex"> </view>-->
+  <image src="@/image/test.png" mode="scaleToFill" />
+  <image src="@/assets/move.png" mode="scaleToFill" />
 </template>
 
 <script setup lang="ts">
@@ -136,4 +10,19 @@ const scrolltoupper = () => {
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.bg {
+  width: 100rpx;
+  height: 100rpx;
+  background-color: #f00;
+  .fz {
+    font-size: 100rpx;
+  }
+}
+.content {
+  width: 100rpx;
+}
+.test > .test2 {
+  color: #000;
+}
+</style>
