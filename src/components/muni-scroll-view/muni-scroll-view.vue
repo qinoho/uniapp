@@ -234,7 +234,6 @@ const scrollStyle = computed(() => {
     return dampedPullHeight.value
   }
 
-  console.log(scrollEnabled.value, '=================')
   return {
     height: '100%',
     transform: `translateY(${getScrollOffset()}px)`,
@@ -379,7 +378,6 @@ const handleScrollToUpperOriginal = (e: any) => {
 }
 
 const handleScrollToLowerOriginal = (e: any) => {
-  console.log(props.enableLoadMore, loadMoreStatus.value, isLoadingMore.value)
   if (props.enableLoadMore && loadMoreStatus.value === 'more' && !isLoadingMore.value) {
     triggerLoadMore()
   }

@@ -76,15 +76,7 @@
 </template>
 
 <script setup lang="ts">
-import {
-  ref,
-  computed,
-  onMounted,
-  nextTick,
-  watch,
-  getCurrentInstance,
-  reactive,
-} from 'vue'
+import { ref, computed, onMounted, nextTick, watch, getCurrentInstance, reactive } from 'vue'
 
 // Props 定义
 interface Props {
@@ -138,14 +130,8 @@ const itemRect = ref({ width: 0, height: 0 })
 
 // 样式（不动你的样式，这里仅提供默认宽高 100% 行内 style，可被父容器控制）
 const areaStyle = computed(() => ({
-  width:
-    typeof props.areaWidth === 'number'
-      ? `${props.areaWidth}px`
-      : props.areaWidth,
-  height:
-    typeof props.areaHeight === 'number'
-      ? `${props.areaHeight}px`
-      : props.areaHeight,
+  width: typeof props.areaWidth === 'number' ? `${props.areaWidth}px` : props.areaWidth,
+  height: typeof props.areaHeight === 'number' ? `${props.areaHeight}px` : props.areaHeight,
 }))
 
 // 这里不覆写你的 .movable-view 宽高样式，如需自定义可自行扩展
@@ -171,8 +157,8 @@ const readSizes = async () => {
 
 // 将位置限制在区域内
 const clampToBounds = (x: number, y: number) => {
-  const iw = itemRect.value.width || 60 // 回退为 60px
-  const ih = itemRect.value.height || 60
+  const iw = itemRect.value.width || parseFloat(props.width.toString()) || 60
+  const ih = itemRect.value.height || parseFloat(props.height.toString()) || 60
   const maxX = Math.max(0, (areaRect.value.width || 0) - iw)
   const maxY = Math.max(0, (areaRect.value.height || 0) - ih)
   return {
@@ -184,8 +170,8 @@ const clampToBounds = (x: number, y: number) => {
 // 根据阈值吸附到最近边界
 const snapToNearestBorder = (x: number, y: number) => {
   if (!props.snapToBorder) return { x, y }
-  const iw = itemRect.value.width || 60
-  const ih = itemRect.value.height || 60
+  const iw = itemRect.value.width || parseFloat(props.width.toString()) || 60
+  const ih = itemRect.value.height || parseFloat(props.height.toString()) || 60
   const w = areaRect.value.width || 0
   const h = areaRect.value.height || 0
   const leftDist = x
