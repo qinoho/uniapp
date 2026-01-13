@@ -13,6 +13,7 @@ export type RequestMethod =
   | 'OPTIONS'
   | 'TRACE'
   | 'CONNECT'
+
 // 请求配置接口
 export interface RequestConfig {
   url: string
@@ -174,17 +175,17 @@ class ConcurrencyController {
 
 // 主要的请求类
 export class HttpRequest {
-  public defaults: RequestConfig = {
+  public defaults: Partial<RequestConfig> = {
     method: 'GET',
     timeout: 10000,
-    dataType: 'json',
-    responseType: 'text',
-    sslVerify: true,
-    withCredentials: false,
-    enableHttp2: false,
-    enableQuic: false,
-    enableCache: false,
-    enableCookie: true,
+    // dataType: 'json',
+    // responseType: 'text',
+    // sslVerify: true,
+    // withCredentials: false,
+    // enableHttp2: false,
+    // enableQuic: false,
+    // enableCache: false,
+    // enableCookie: true,
     header: {
       'Content-Type': 'application/json',
     },
@@ -208,13 +209,22 @@ export class HttpRequest {
   }
 
   // 合并配置
-  private mergeConfig(config: RequestConfig): RequestConfig {
-    const merged = { ...this.defaults, ...config }
+  private mergeConfig(config: Partial<RequestConfig> = {}): RequestConfig {
+    const merged = { ...this.defaults, ...config } as RequestConfig
 
     // 处理URL拼接
     if (merged.baseURL && merged.url && !merged.url.startsWith('http')) {
       merged.url =
         merged.baseURL.replace(/\/$/, '') + '/' + merged.url.replace(/^\//, '')
+    }
+
+    // 处理 url参数是否存在
+    if (merged.url === '' || merged.url == undefined || merged.url === null) {
+      // throw new Error('request url is undefined ')
+      throw new RequestError(
+        'request url is undefined',
+        merged as RequestConfig
+      )
     }
 
     // 处理query参数
@@ -227,7 +237,7 @@ export class HttpRequest {
             )}`
         )
         .join('&')
-      merged.url += (merged.url.includes('?') ? '&' : '?') + queryString
+      merged.url += (merged!.url.includes('?') ? '&' : '?') + queryString
     }
 
     return merged
@@ -319,7 +329,7 @@ export class HttpRequest {
   }
 
   // 主要的请求方法
-  async request<T = any>(config: RequestConfig): Promise<ResponseData<T>> {
+  async request<T = any>(config?: RequestConfig): Promise<ResponseData<T>> {
     try {
       // 合并配置
       let mergedConfig = this.mergeConfig(config)
@@ -479,7 +489,6 @@ export class HttpRequest {
   ): Promise<ResponseData<T>> {
     return this.request<T>({ ...config, url, method: 'DELETE' })
   }
-
 
   // 带重试的便捷方法
   getWithRetry<T = any>(

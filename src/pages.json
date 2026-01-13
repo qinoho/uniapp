@@ -1,6 +1,10 @@
 {
 	"pages": [
 		{
+			"path": "pages/move/index",
+			"style": {}
+		},
+		{
 			"path": "pages/index/index",
 			"style": {}
 		}

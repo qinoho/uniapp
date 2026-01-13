@@ -11,11 +11,7 @@
       }"
       :style="refreshStyle"
     >
-      <slot
-        name="refresh"
-        :status="refreshStatus"
-        :distance="pullDistance"
-      ></slot>
+      <slot name="refresh" :status="refreshStatus" :distance="pullDistance"></slot>
     </view>
 
     <!-- 滚动容器 -->
@@ -55,10 +51,7 @@
       >
         <slot name="loadmore" :status="loadMoreStatus">
           <view class="u-scroll-view__loadmore-default">
-            <view
-              v-if="loadMoreStatus === 'loading'"
-              class="u-scroll-view__loading-spinner"
-            ></view>
+            <view v-if="loadMoreStatus === 'loading'" class="u-scroll-view__loading-spinner"></view>
             <text class="u-scroll-view__loadmore-text">{{ loadMoreText }}</text>
           </view>
         </slot>
@@ -131,13 +124,7 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 // 定义事件
-const emit = defineEmits([
-  'refresh',
-  'loadmore',
-  'scroll',
-  'scrolltoupper',
-  'scrolltolower',
-])
+const emit = defineEmits(['refresh', 'loadmore', 'scroll', 'scrolltoupper', 'scrolltolower'])
 
 // 获取插槽
 const slots = useSlots()
@@ -247,6 +234,7 @@ const scrollStyle = computed(() => {
     return dampedPullHeight.value
   }
 
+  console.log(scrollEnabled.value, '=================')
   return {
     height: '100%',
     transform: `translateY(${getScrollOffset()}px)`,
@@ -317,8 +305,7 @@ const handleNativeRefreshRestore = () => {
 
 // 触摸事件处理（仅在自定义刷新时使用）
 const handleTouchStart = (e: TouchEvent) => {
-  if (!props.enableRefresh || !hasCustomRefresh.value || isRefreshing.value)
-    return
+  if (!props.enableRefresh || !hasCustomRefresh.value || isRefreshing.value) return
 
   startY.value = e.touches[0].clientY
   currentY.value = startY.value
@@ -327,8 +314,7 @@ const handleTouchStart = (e: TouchEvent) => {
 }
 
 const handleTouchMove = (e: TouchEvent) => {
-  if (!props.enableRefresh || !hasCustomRefresh.value || isRefreshing.value)
-    return
+  if (!props.enableRefresh || !hasCustomRefresh.value || isRefreshing.value) return
 
   currentY.value = e.touches[0].clientY
   const deltaY = currentY.value - startY.value
@@ -361,8 +347,7 @@ const handleTouchMove = (e: TouchEvent) => {
 }
 
 const handleTouchEnd = () => {
-  if (!props.enableRefresh || !hasCustomRefresh.value || isRefreshing.value)
-    return
+  if (!props.enableRefresh || !hasCustomRefresh.value || isRefreshing.value) return
 
   const touchDuration = Date.now() - touchStartTime.value
 
@@ -394,11 +379,8 @@ const handleScrollToUpperOriginal = (e: any) => {
 }
 
 const handleScrollToLowerOriginal = (e: any) => {
-  if (
-    props.enableLoadMore &&
-    loadMoreStatus.value === 'more' &&
-    !isLoadingMore.value
-  ) {
+  console.log(props.enableLoadMore, loadMoreStatus.value, isLoadingMore.value)
+  if (props.enableLoadMore && loadMoreStatus.value === 'more' && !isLoadingMore.value) {
     triggerLoadMore()
   }
   emit('scrolltolower', e)

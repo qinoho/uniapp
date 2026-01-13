@@ -1,7 +1,8 @@
 <template>
-  <!-- <view class="bg" style="overflow: hidden; display: flex"> </view>-->
-  <image src="@/image/test.png" mode="scaleToFill" />
-  <image src="@/assets/move.png" mode="scaleToFill" />
+  <!-- <view class="bg" style="overflow: hidden; display: flex"> </view> -->
+  <view>
+    <image src="@/assets/111.png" mode="scaleToFill" />
+  </view>
 </template>
 
 <script setup lang="ts">

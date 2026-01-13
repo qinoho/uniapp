@@ -3,10 +3,10 @@
     <!-- 主要内容区域 -->
     <uni-nav-header v-bind="navBarObj"></uni-nav-header>
     <view class="u-pages__content" :style="contentStyle">
-      <uni-scroll-view :enable-load-more="true" @loadmore="scrolltoupper">
+      <muni-scroll-view :enable-load-more="true" @loadmore="scrolltoupper">
         <slot></slot>
         <view class="safe_bottom_area" :style="safeBottomStyle"></view>
-      </uni-scroll-view>
+      </muni-scroll-view>
       <!-- <view style="flex: 1; height: 0; flex-basis: 0">
         <scroll-view
           scroll-y
@@ -24,15 +24,14 @@
 import { ref, computed, onBeforeMount } from 'vue'
 import { getSystemInfoFn } from '@/utils/utils'
 const scrolltoupper = () => {
-  console.log(
-    '1111111111111111aaaaaaaaaaa======================================'
-  )
+  console.log('1111111111111111aaaaaaaaaaa======================================')
 }
 interface Props {
   title?: string
   showBack?: boolean
   backgroundColor?: string
   navBarHeight?: string | number
+  showTitle?: boolean
 }
 
 const safeAreaBottom = ref<number>(0)
@@ -42,6 +41,7 @@ const props = withDefaults(defineProps<Props>(), {
   showBack: true,
   backgroundColor: '#ffffff',
   navBarHeight: '',
+  showTitle: true,
 })
 
 const navBarObj = computed(() => ({
@@ -49,6 +49,7 @@ const navBarObj = computed(() => ({
   showBack: props.showBack,
   backgroundColor: props.backgroundColor,
   navBarHeight: props.navBarHeight,
+  isShow: props.showTitle,
 }))
 
 const contentStyle = computed(() => {
@@ -70,9 +71,7 @@ const calculateSafeArea = async () => {
   console.log('systemInfo', systemInfo)
   // 底部安全区域高度
   // #ifdef APP-PLUS
-  safeAreaBottom.value = systemInfo.safeAreaInsets
-    ? systemInfo.safeAreaInsets.bottom
-    : 0
+  safeAreaBottom.value = systemInfo.safeAreaInsets ? systemInfo.safeAreaInsets.bottom : 0
   // #endif
   // #ifdef H5
   safeAreaBottom.value = 0
@@ -92,7 +91,7 @@ const calculateSafeArea = async () => {
   width: 100vw;
   min-height: 100vh;
   max-height: 100vh;
-  height: 100dvh;
+  height: 100vh;
   display: flex;
   flex-direction: column;
   overflow: hidden;

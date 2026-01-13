@@ -1,6 +1,6 @@
 <template>
   <!-- 导航栏 -->
-  <view class="u-nav" :style="navBarStyle">
+  <view class="u-nav" :style="navBarStyle" v-if="isShow">
     <slot name="navBar">
       <view class="u-nav-content">
         <!-- 左侧返回按钮 -->
@@ -36,6 +36,7 @@ interface Props {
   showBack?: boolean
   backgroundColor?: string
   navBarHeight?: string | number
+  isShow?: boolean
 }
 
 // 定义 Props 默认值
@@ -44,6 +45,7 @@ const props = withDefaults(defineProps<Props>(), {
   showBack: true,
   navBarHeight: '',
   backgroundColor: '#ffffff',
+  isShow: true,
 })
 
 const statusBarHeight = ref<number>(0)
@@ -76,9 +78,7 @@ const calculateSafeArea = () => {
   // 导航栏高度
   if (props.navBarHeight) {
     navBarHeightValue.value =
-      typeof props.navBarHeight === 'string'
-        ? parseInt(props.navBarHeight)
-        : props.navBarHeight
+      typeof props.navBarHeight === 'string' ? parseInt(props.navBarHeight) : props.navBarHeight
   } else {
     navBarHeightValue.value = systemInfo.navBarHeight
   }
