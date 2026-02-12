@@ -49,16 +49,17 @@ const onLoadMore = () => {
 
 ### 属性 (Props)
 
-| 属性名            | 类型          | 默认值        | 说明                   |
-| ----------------- | ------------- | ------------- | ---------------------- |
-| height            | String/Number | '100%'        | 容器高度               |
-| backgroundColor   | String        | 'transparent' | 背景颜色               |
-| enableRefresh     | Boolean       | true          | 是否开启下拉刷新       |
-| refreshThreshold  | Number        | 80            | 下拉刷新阈值           |
-| enableLoadMore    | Boolean       | true          | 是否开启上拉加载       |
-| loadMoreThreshold | Number        | 50            | 上拉加载阈值           |
-| enableBackToTop   | Boolean       | true          | 点击顶部状态栏返回顶部 |
-| contentPadding    | String        | '0'           | 内容区域内边距         |
+| 属性名                | 类型          | 默认值        | 说明                                      |
+| --------------------- | ------------- | ------------- | ----------------------------------------- |
+| height                | String/Number | '100%'        | 容器高度                                  |
+| backgroundColor       | String        | 'transparent' | 背景颜色                                  |
+| enableRefresh         | Boolean       | true          | 是否开启下拉刷新                          |
+| refreshThreshold      | Number        | 80            | 下拉刷新阈值                              |
+| enableLoadMore        | Boolean       | true          | 是否开启上拉加载                          |
+| loadMoreThreshold     | Number        | 50            | 上拉加载阈值                              |
+| defaultLoadMoreStatus | String        | 'more'        | 初始加载状态: 'more', 'loading', 'nomore' |
+| enableBackToTop       | Boolean       | true          | 点击顶部状态栏返回顶部                    |
+| contentPadding        | String        | '0'           | 内容区域内边距                            |
 
 ### 事件 (Events)
 
@@ -94,30 +95,21 @@ const onLoadMore = () => {
 
 ### 属性 (Props)
 
-| 属性名          | 类型          | 默认值    | 说明             |
-| --------------- | ------------- | --------- | ---------------- |
-| title           | String        | '标题'    | 导航栏标题       |
-| showBack        | Boolean       | true      | 是否显示返回按钮 |
-| backgroundColor | String        | '#ffffff' | 背景颜色         |
-| navBarHeight    | String/Number | -         | 自定义导航栏高度 |
-| showTitle       | Boolean       | true      | 是否显示导航栏   |
-| enableRefresh   | Boolean       | false     | 是否开启下拉刷新 |
-| enableLoadMore  | Boolean       | false     | 是否开启上拉加载 |
-
-### 事件 (Events)
-
-| 事件名   | 说明               | 回调参数 |
-| -------- | ------------------ | -------- |
-| back     | 点击返回按钮时触发 | -        |
-| refresh  | 下拉刷新时触发     | -        |
-| loadmore | 上拉加载时触发     | -        |
-| scroll   | 滚动时触发         | event    |
+| refresh | 下拉刷新时触发 | - |
+| loadmore | 上拉加载时触发 | - |
+| scroll | 滚动时触发 | event |
+| scrolltoupper | 滚动到顶部时触发 | event |
+| scrolltolower | 滚动到底部时触发 | event |
 
 ### 插槽 (Slots)
 
 | 插槽名   | 说明               | 参数                                 |
 | -------- | ------------------ | ------------------------------------ |
 | default  | 页面主要内容       | -                                    |
+| navbar   | 自定义整个导航栏   | -                                    |
+| navLeft  | 自定义导航栏左侧   | -                                    |
+| navTitle | 自定义导航栏标题   | -                                    |
+| navRight | 自定义导航栏右侧   | -                                    |
 | refresh  | 自定义下拉刷新区域 | { status: string, distance: number } |
 | loadmore | 自定义上拉加载区域 | { status: string }                   |
 
