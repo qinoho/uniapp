@@ -9,9 +9,10 @@ declare module '*.vue' {
 
 // Vue 3 编译器宏声明
 declare global {
-  const defineProps: typeof import('vue')['defineProps']
-  const defineEmits: typeof import('vue')['defineEmits']
-  const withDefaults: typeof import('vue')['withDefaults']
-  const defineOptions: typeof import('vue')['defineOptions']
+  interface Uni {
+    $showToast: (options: any) => void
+  }
 }
+
+export {}
 
