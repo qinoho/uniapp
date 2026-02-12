@@ -1,26 +1,97 @@
 <template>
   <view class="u-pages">
-    <!-- 主要内容区域 -->
-    <uni-nav-header v-bind="navBarObj" @back="handleBack"></uni-nav-header>
-    <view class="u-pages__content" :style="contentStyle">
-      <muni-scroll-view
-        ref="scrollViewRef"
-        :enable-refresh="enableRefresh"
-        :enable-load-more="enableLoadMore"
+    <!-- 导航栏区域 -->
+    <slot name="navbar">
+      <uni-nav-header
+        :title="title"
+        :show-back="showBack"
         :background-color="backgroundColor"
-        @refresh="onRefresh"
-        @loadmore="onLoadMore"
-        @scroll="onScroll"
+        :nav-bar-height="navBarHeight"
+        :is-show="showTitle"
+        @back="handleBack"
       >
-        <template #refresh="slotProps" v-if="$slots.refresh">
-          <slot name="refresh" v-bind="slotProps"></slot>
+        <!-- #ifdef MP-WEIXIN || MP-ALIPAY || MP-BAIDU || MP-TOUTIAO || MP-QQ -->
+        <!-- 小程序端：UniApp 编译器自动处理 slot 透传，view 包裹不影响 -->
+        <view v-if="$slots.navLeft">
+          <template #navLeft>
+            <slot name="navLeft"></slot>
+          </template>
+        </view>
+        <view v-if="$slots.navTitle">
+          <template #navTitle>
+            <slot name="navTitle"></slot>
+          </template>
+        </view>
+        <view v-if="$slots.navRight">
+          <template #navRight>
+            <slot name="navRight"></slot>
+          </template>
+        </view>
+        <!-- #endif -->
+        <!-- #ifdef H5 || APP-PLUS -->
+        <!-- H5/App 端：template #slot 必须是组件直接子元素，否则 slot 透传失效 -->
+        <template v-if="$slots.navLeft" #navLeft>
+          <slot name="navLeft"></slot>
         </template>
-        <slot></slot>
-        <template #loadmore="slotProps" v-if="$slots.loadmore">
-          <slot name="loadmore" v-bind="slotProps"></slot>
+        <template v-if="$slots.navTitle" #navTitle>
+          <slot name="navTitle"></slot>
         </template>
-        <view class="safe_bottom_area" :style="safeBottomStyle"></view>
-      </muni-scroll-view>
+        <template v-if="$slots.navRight" #navRight>
+          <slot name="navRight"></slot>
+        </template>
+        <!-- #endif -->
+      </uni-nav-header>
+    </slot>
+    <view class="u-pages__content" :style="contentStyle">
+      <view class="u-pages__scroll-wrapper">
+        <muni-scroll-view
+          ref="scrollViewRef"
+          :enable-refresh="enableRefresh"
+          :refresh-threshold="refreshThreshold"
+          :enable-load-more="enableLoadMore"
+          :load-more-threshold="loadMoreThreshold"
+          :default-load-more-status="defaultLoadMoreStatus"
+          :enable-back-to-top="enableBackToTop"
+          :scroll-with-animation="scrollWithAnimation"
+          :scroll-top="scrollTop"
+          :background-color="backgroundColor"
+          @refresh="onRefresh"
+          @loadmore="onLoadMore"
+          @scroll="onScroll"
+          @scrolltoupper="onScrollToUpper"
+          @scrolltolower="onScrollToLower"
+        >
+          <!-- #ifdef MP-WEIXIN || MP-ALIPAY || MP-BAIDU || MP-TOUTIAO || MP-QQ -->
+          <view v-if="$slots.refresh">
+            <template #refresh="slotProps">
+              <slot name="refresh" :status="slotProps.status" :distance="slotProps.distance"></slot>
+            </template>
+          </view>
+          <!-- #endif -->
+          <!-- #ifdef H5 || APP-PLUS -->
+          <template v-if="$slots.refresh" #refresh="slotProps">
+            <slot name="refresh" :status="slotProps.status" :distance="slotProps.distance"></slot>
+          </template>
+          <!-- #endif -->
+
+          <slot></slot>
+
+          <!-- #ifdef MP-WEIXIN || MP-ALIPAY || MP-BAIDU || MP-TOUTIAO || MP-QQ -->
+          <view v-if="$slots.loadmore">
+            <template #loadmore="slotProps">
+              <slot name="loadmore" :status="slotProps.status"></slot>
+            </template>
+          </view>
+          <!-- #endif -->
+          <!-- #ifdef H5 || APP-PLUS -->
+          <template v-if="$slots.loadmore" #loadmore="slotProps">
+            <slot name="loadmore" :status="slotProps.status"></slot>
+          </template>
+          <!-- #endif -->
+
+          <view class="safe_bottom_area" :style="safeBottomStyle"></view>
+        </muni-scroll-view>
+      </view>
     </view>
   </view>
 </template>
@@ -37,7 +108,13 @@ interface Props {
   showTitle?: boolean
   // Scroll View Props
   enableRefresh?: boolean
+  refreshThreshold?: number
   enableLoadMore?: boolean
+  loadMoreThreshold?: number
+  defaultLoadMoreStatus?: 'more' | 'loading' | 'nomore'
+  enableBackToTop?: boolean
+  scrollWithAnimation?: boolean
+  scrollTop?: number
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -47,10 +124,23 @@ const props = withDefaults(defineProps<Props>(), {
   navBarHeight: '',
   showTitle: true,
   enableRefresh: false,
+  refreshThreshold: 80,
   enableLoadMore: false,
+  loadMoreThreshold: 50,
+  defaultLoadMoreStatus: 'more',
+  enableBackToTop: true,
+  scrollWithAnimation: true,
+  scrollTop: 0,
 })
 
-const emit = defineEmits(['back', 'refresh', 'loadmore', 'scroll'])
+const emit = defineEmits([
+  'back',
+  'refresh',
+  'loadmore',
+  'scroll',
+  'scrolltoupper',
+  'scrolltolower',
+])
 
 const scrollViewRef = ref()
 const safeAreaBottom = ref<number>(0)
@@ -65,7 +155,12 @@ const navBarObj = computed(() => ({
 
 const contentStyle = computed(() => {
   return {
+    // #ifdef H5
+    width: '100%', // H5 端使用 100% 避免滚动条导致的溢出
+    // #endif
+    // #ifndef H5
     width: '100vw',
+    // #endif
     backgroundColor: props.backgroundColor,
   }
 })
@@ -113,6 +208,14 @@ const onScroll = (e: any) => {
   emit('scroll', e)
 }
 
+const onScrollToUpper = (e: any) => {
+  emit('scrolltoupper', e)
+}
+
+const onScrollToLower = (e: any) => {
+  emit('scrolltolower', e)
+}
+
 // Expose scroll view methods
 const finishRefresh = () => {
   scrollViewRef.value?.finishRefresh()
@@ -145,11 +248,24 @@ defineExpose({
   overflow: hidden;
   &__content {
     flex: 1;
-    min-height: 0;
-    height: 0;
-    display: flex;
-    flex-basis: 0;
-    flex-direction: column;
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+  }
+  &__scroll-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
   }
 }
+
+/* H5 端底部安全区域 CSS 兜底 */
+/* #ifdef H5 */
+.safe_bottom_area {
+  padding-bottom: constant(safe-area-inset-bottom); /* iOS < 11.2 */
+  padding-bottom: env(safe-area-inset-bottom); /* iOS >= 11.2 */
+}
+/* #endif */
 </style>

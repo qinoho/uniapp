@@ -2,11 +2,20 @@
 	"pages": [
 		{
 			"path": "pages/move/index",
-			"style": {}
+			"style": {
+				"navigationStyle": "custom",
+				"disableScroll": true
+			}
 		},
 		{
 			"path": "pages/index/index",
 			"style": {}
+		},
+		{
+			"path": "pages/test/test",
+			"style": {
+				"navigationStyle": "custom"
+			}
 		}
 	],
 	"globalStyle": {

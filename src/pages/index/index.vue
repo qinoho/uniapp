@@ -3,11 +3,52 @@
   <view>
     <image src="@/assets/111.png" mode="scaleToFill" />
   </view>
+  <uni-movable
+    :area-width="areaWidth"
+    :area-height="areaHeight"
+    :width="width"
+    :height="height"
+    :x="x"
+    :y="y"
+    :direction="direction"
+    :damping="damping"
+    :friction="friction"
+    :disabled="disabled"
+    :snap-to-border="snapToBorder"
+    :snap-threshold="snapThreshold"
+    @change="onChange"
+    @dragStart="onDragStart"
+    @dragEnd="onDragEnd"
+    :snap-borders="['top', 'left']"
+  >
+    <view class="custom-content"> 自定义内容 </view>
+  </uni-movable>
 </template>
 
 <script setup lang="ts">
-const scrolltoupper = () => {
-  console.log('scrolltoupper')
+const areaWidth = '100vw'
+const areaHeight = '100vh'
+const width = 60
+const height = 60
+const x = 0
+const y = 0
+const direction = 'all'
+const damping = 20
+const friction = 2
+const disabled = false
+const snapToBorder = true
+const snapThreshold = 50
+
+const onChange = (detail: any) => {
+  console.log('change', detail)
+}
+
+const onDragStart = (position: { x: number; y: number }) => {
+  console.log('dragStart', position)
+}
+
+const onDragEnd = (position: { x: number; y: number }) => {
+  console.log('dragEnd', position)
 }
 </script>
 
@@ -25,5 +66,9 @@ const scrolltoupper = () => {
 }
 .test > .test2 {
   color: #000;
+}
+.custom-content {
+  width: 100rpx;
+  height: 100rpx;
 }
 </style>

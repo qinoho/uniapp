@@ -13,8 +13,11 @@ export interface SystemInfoInterface {
   navBarHeight: number // 顶部导航高度
   menuButtonHeight: number // 右上角胶囊高
   menuButtonWidth: number // 右上角胶囊宽
+  menuButtonTop: number // 右上角胶囊距顶部距离
+  menuButtonRight: number // 右上角胶囊右侧边距（距屏幕右边缘）
   safeAreaInsets: UniApp.SafeAreaInsets | undefined
   safeArea: UniApp.SafeArea | undefined
+  windowTop?: number
 }
 
 /**
@@ -62,8 +65,11 @@ export async function getSystemInfoFn(): Promise<SystemInfoInterface> {
       navBarHeight,
       menuButtonHeight: menuButtonInfo.height,
       menuButtonWidth: menuButtonInfo.width,
+      menuButtonTop: menuButtonInfo.top,
+      menuButtonRight: screenWidth - menuButtonInfo.right, // 转换为距屏幕右边缘的距离
       safeAreaInsets: systemInfo.safeAreaInsets,
       safeArea: systemInfo.safeArea,
+      windowTop: systemInfo.windowTop,
     }
   } catch (error) {
     console.error('获取系统参数失败:', error)
@@ -101,7 +107,7 @@ export function pxToRpxSync(pxValue: number, rpx: number): number {
 export function debounce<T extends (...args: any[]) => any>(
   func: T,
   delay: number,
-  immediate: boolean = false
+  immediate: boolean = false,
 ): (...args: Parameters<T>) => void {
   let timeoutId: number | null = null
   let isInvokedImmediate = false
@@ -144,7 +150,7 @@ export function throttle<T extends (...args: any[]) => any>(
   options: {
     leading?: boolean // 是否在开始时执行
     trailing?: boolean // 是否在结束时执行
-  } = {}
+  } = {},
 ): (...args: Parameters<T>) => void {
   const { leading = true, trailing = true } = options
   let timeoutId: number | null = null
@@ -197,7 +203,7 @@ export function throttle<T extends (...args: any[]) => any>(
  */
 export function throttleScroll<T extends (...args: any[]) => any>(
   func: T,
-  delay: number = 16
+  delay: number = 16,
 ): (...args: Parameters<T>) => void {
   return throttle(func, delay, { leading: true, trailing: true })
 }

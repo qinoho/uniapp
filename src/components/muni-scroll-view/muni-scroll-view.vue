@@ -52,7 +52,7 @@
         <slot name="loadmore" :status="loadMoreStatus">
           <view class="u-scroll-view__loadmore-default">
             <view v-if="loadMoreStatus === 'loading'" class="u-scroll-view__loading-spinner"></view>
-            <text class="u-scroll-view__loadmore-text">{{ loadMoreText }}</text>
+            <text class="u-scroll-view__loadmore-text">{{ currentLoadMoreText }}</text>
           </view>
         </slot>
       </view>
@@ -85,6 +85,7 @@ interface Props {
   // 上拉加载配置
   enableLoadMore?: boolean
   loadMoreThreshold?: number
+  defaultLoadMoreStatus?: LoadMoreStatus
   loadMoreText?: {
     more?: string
     loading?: string
@@ -112,6 +113,7 @@ const props = withDefaults(defineProps<Props>(), {
   }),
   enableLoadMore: true,
   loadMoreThreshold: 50,
+  defaultLoadMoreStatus: 'more',
   loadMoreText: () => ({
     more: '上拉加载更多',
     loading: '正在加载...',
@@ -131,7 +133,7 @@ const slots = useSlots()
 
 // 响应式数据
 const refreshStatus = ref<RefreshStatus>('none')
-const loadMoreStatus = ref<LoadMoreStatus>('more')
+const loadMoreStatus = ref<LoadMoreStatus>(props.defaultLoadMoreStatus)
 const pullDistance = ref(0)
 const startY = ref(0)
 const currentY = ref(0)
@@ -188,7 +190,8 @@ const refreshStyle = computed(() => {
   const displayHeight = dampedPullHeight.value
 
   return {
-    transform: `translateY(calc(-100% + ${displayHeight}px))`,
+    // Avoid calc() for better compatibility
+    transform: `translateY(-100%) translateY(${displayHeight}px)`,
     opacity: refreshStatus.value === 'none' ? 0 : 1,
     transition: getRefreshTransition(),
     zIndex: refreshStatus.value === 'loading' ? 20 : 10, // 加载时提高层级
@@ -204,11 +207,11 @@ const getRefreshTransition = () => {
 
   // 加载状态时使用较快的动画
   if (refreshStatus.value === 'loading') {
-    return 'transform 0.2s ease-out, opacity 0.2s ease-out'
+    return 'transform 0.2s ease-out, opacity 0.2s ease-out, -webkit-transform 0.2s ease-out'
   }
 
   // 完成后使用较慢的动画，确保平滑隐藏
-  return 'transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 1s ease-out'
+  return 'transform 0.3s ease-out, opacity 0.3s ease-out, -webkit-transform 0.3s ease-out'
 }
 // 控制滚动能力
 const scrollEnabled = computed(() => {
@@ -251,42 +254,34 @@ const getScrollTransition = () => {
 
   // 加载状态时使用与刷新区域同步的动画
   if (refreshStatus.value === 'loading') {
-    return 'transform 0.2s ease-out'
+    return 'transform 0.2s ease-out, -webkit-transform 0.2s ease-out'
   }
 
   // 完成后使用较慢的动画，与刷新区域同步
-  return 'transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+  return 'transform 0.3s ease-out, -webkit-transform 0.3s ease-out'
 }
 
 const contentStyle = computed(() => ({
   padding: props.contentPadding,
-  minHeight: '100%',
+  minHeight: props.enableLoadMore ? 'calc(100% - 50px)' : '100%',
 }))
 
 const refreshText = computed(() => {
-  switch (refreshStatus.value) {
-    case 'pulling':
-      return props.refreshText.pulling
-    case 'release':
-      return props.refreshText.release
-    case 'loading':
-      return props.refreshText.loading
-    default:
-      return ''
+  const textMap = {
+    pulling: props.refreshText?.pulling || '下拉刷新',
+    release: props.refreshText?.release || '释放刷新',
+    loading: props.refreshText?.loading || '正在刷新...',
   }
+  return textMap[refreshStatus.value as keyof typeof textMap] || ''
 })
 
-const loadMoreText = computed(() => {
-  switch (loadMoreStatus.value) {
-    case 'more':
-      return props.loadMoreText.more
-    case 'loading':
-      return props.loadMoreText.loading
-    case 'nomore':
-      return props.loadMoreText.nomore
-    default:
-      return ''
+const currentLoadMoreText = computed(() => {
+  const textMap = {
+    more: props.loadMoreText?.more || '上拉加载更多',
+    loading: props.loadMoreText?.loading || '正在加载...',
+    nomore: props.loadMoreText?.nomore || '没有更多数据了',
   }
+  return textMap[loadMoreStatus.value as keyof typeof textMap] || ''
 })
 
 // 原生下拉刷新事件处理
@@ -533,15 +528,6 @@ defineExpose({
   }
 }
 
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
 // 平台适配
 // #ifdef APP-PLUS
 .u-scroll-view {
@@ -562,12 +548,20 @@ defineExpose({
 
 // #ifdef H5
 .u-scroll-view {
-  max-height: 100% !important;
-  height: auto !important;
+  height: 100% !important; // Ensure it fills the container
   &__scroll {
     -webkit-overflow-scrolling: touch;
   }
 }
 // #endif
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
 </style>
 

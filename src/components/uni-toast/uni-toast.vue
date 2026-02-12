@@ -1,7 +1,7 @@
 <template>
   <view class="uni-toast" v-if="showToast" :class="{ 'uni-toast--show': showToast }">
     <view class="uni-toast__content">
-      <view v-if="icon" class="uni-toast__icon">
+      <view v-if="icon && icon !== 'none'" class="uni-toast__icon">
         <text v-if="icon === 'success'" class="uni-icon">✓</text>
         <text v-else-if="icon === 'error'" class="uni-icon">✕</text>
         <text v-else-if="icon === 'loading'" class="uni-icon uni-loading"></text>
@@ -12,6 +12,7 @@
 </template>
 
 <script setup lang="ts">
+import { onShow } from '@dcloudio/uni-app'
 import { ref } from 'vue'
 
 interface ToastOptions {
@@ -20,6 +21,12 @@ interface ToastOptions {
   duration?: number
   mask?: boolean
 }
+
+onShow(() => {
+  uni.$on('$showToast', (options: ToastOptions) => {
+    show(options)
+  })
+})
 
 const showToast = ref(false)
 const title = ref('')
@@ -71,7 +78,7 @@ defineExpose({
 
   &__content {
     background-color: rgba(0, 0, 0, 0.7);
-    padding: 12px 24px;
+    padding: 6px 12px;
     border-radius: 8px;
     display: flex;
     flex-direction: column;
@@ -101,7 +108,9 @@ defineExpose({
     color: #fff;
     font-size: 14px;
     text-align: center;
-    line-height: 1.5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 }
 
