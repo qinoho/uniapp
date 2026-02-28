@@ -1,5 +1,10 @@
 <template>
-  <view class="uni-toast" v-if="showToast" :class="{ 'uni-toast--show': showToast }">
+  <view
+    class="uni-toast"
+    v-if="showToast"
+    :class="{ 'uni-toast--show': showToast }"
+    @click.stop.prevent="()=>({})"
+  >
     <view class="uni-toast__content">
       <view v-if="icon && icon !== 'none'" class="uni-toast__icon">
         <text v-if="icon === 'success'" class="uni-icon">✓</text>
@@ -48,7 +53,10 @@ const show = (options: ToastOptions) => {
     }, duration)
   }
 }
-
+const stopEvent = (e: Event) => {
+  console.log('stopEvent', e)
+  return false
+}
 const hide = () => {
   showToast.value = false
   if (timer) {
@@ -74,7 +82,7 @@ defineExpose({
   justify-content: center;
   align-items: center;
   z-index: 9999;
-  pointer-events: none; // Allow clicks through transparent area
+  // pointer-events: none; // Allow clicks through transparent area
 
   &__content {
     background-color: rgba(0, 0, 0, 0.7);
