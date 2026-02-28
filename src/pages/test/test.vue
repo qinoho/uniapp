@@ -6,21 +6,21 @@
         <view v-for="item in 100">{{ item }}</view>
 
         <!-- <template #loadmore> 你好啊啊啊啊 </template> -->
+        <view class="bottom_action"></view>
       </uni-pages>
     </view>
-    <view class="bottom_action"></view>
   </view>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
-// 导入uni组件对象类型
+// 导入uni组件对象类型8
 
 const show = () => {
   uni.$showToast({
     title:
       '你好啊你好啊你好啊你好啊你好啊你好啊你好啊你好啊你好啊你好啊你好啊你好啊你好啊你好啊你好啊你好啊你好啊你好啊你好啊你好啊你好啊你好啊你好啊你好啊你好啊你好啊你好啊你好啊你好啊你好啊你好啊你好啊你好啊你好啊你好啊你好啊你好啊你好啊你好啊你好啊你好啊你好啊你好啊你好啊你好啊你好啊你好啊你好啊你好啊你好啊你好啊你好啊',
-    icon: 'none',
+    icon: 'loading',
     duration: 1500,
   })
   console.log(uni.$showToast)
