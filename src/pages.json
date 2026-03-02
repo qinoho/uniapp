@@ -23,11 +23,13 @@
 		}
 	],
 	"globalStyle": {
-		"navigationBarTextStyle": "black",
+		"navigationBarTextStyle": "@navTxtStyle",
 		"navigationBarTitleText": "uni-app",
-		"navigationBarBackgroundColor": "#F8F8F8",
-		"backgroundColor": "#F8F8F8"
+		"navigationBarBackgroundColor": "@navBgColor",
+		"backgroundColor": "@bgColor"
 	},
+	"darkmode": true,
+	"themeLocation": "theme.json",
 	"easycom": {
 		"autoscan": true,
 		"custom": {
