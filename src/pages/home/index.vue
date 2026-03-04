@@ -1,145 +1,155 @@
 <template>
-  <view class="home-page">
-    <!-- Search Section -->
-    <view class="search-section" @click="handleSearch">
-      <view class="search-box" hover-class="opacity-80">
-        <image class="search-icon" :src="searchIcon" mode="aspectFit" />
-        <text class="search-text">Search</text>
-      </view>
-    </view>
-
-    <!-- Grid Nav Section -->
-    <view class="grid-nav-section">
-      <scroll-view class="grid-scroll" scroll-x="true" show-scrollbar="false">
-        <view class="grid-container">
-          <view
-            class="grid-item"
-            v-for="(item, index) in navData"
-            :key="index"
-            @click="handleNav(item)"
-            hover-class="opacity-80"
-          >
-            <view class="icon-wrapper">
-              <image class="grid-icon" :src="item.icon" mode="aspectFit" />
-            </view>
-            <text class="grid-text">{{ item.name }}</text>
-          </view>
-        </view>
-      </scroll-view>
-    </view>
-
-    <!-- Banner Section -->
-    <view class="banner-section">
-      <swiper
-        class="banner-swiper"
-        :indicator-dots="true"
-        :autoplay="true"
-        :circular="true"
-        indicator-color="rgba(255,255,255,0.4)"
-        indicator-active-color="#ffffff"
-      >
-        <swiper-item v-for="(item, index) in bannerList" :key="index" @click="handleBanner(item)">
-          <view class="banner-item" hover-class="opacity-80">
-            <!-- No banner image was exported; placeholder styling applied -->
-            <view class="banner-bg"></view>
-            <text class="banner-title">{{ item.title }}</text>
-          </view>
-        </swiper-item>
-      </swiper>
-    </view>
-
-    <!-- Section: Title & Scroll List -->
-    <view class="section-container mt-32">
-      <view class="section-header" @click="handleMore('scroll')">
-        <text class="section-title">Title</text>
-        <view class="more-btn" hover-class="opacity-80">
-          <image class="arrow-right" :src="arrowRight" mode="aspectFit" />
+  <wd-config-provider :theme="themeStore.theme">
+    <view :class="['home-page', themeStore.theme === 'dark' ? 'dark' : '']">
+      <!-- Search Section -->
+      <view class="search-section" @click="handleSearch">
+        <view class="search-box" hover-class="opacity-80">
+          <image class="search-icon" :src="searchIcon" mode="aspectFit" />
+          <text class="search-text">Search</text>
         </view>
       </view>
 
-      <scroll-view class="card-scroll" scroll-x="true" show-scrollbar="false">
-        <view class="card-list">
-          <view
-            class="card-item"
-            v-for="(item, index) in scrollList"
-            :key="index"
-            @click="handleCard(item)"
-            hover-class="opacity-80"
-          >
-            <image class="card-img" :src="item.img" mode="aspectFill" />
-            <text class="card-title">{{ item.title }}</text>
-          </view>
-        </view>
-      </scroll-view>
-    </view>
-
-    <!-- Section: Hot Products -->
-    <view class="section-container mt-32">
-      <view class="section-header" @click="handleMore('hot')">
-        <text class="section-title">Title</text>
-        <view
-          class="more-btn arrow-bg"
-          :style="{ backgroundImage: `url(${arrowBg})` }"
-          hover-class="opacity-80"
-        >
-          <image class="arrow-right-inner" :src="arrowRight" mode="aspectFit" />
-        </view>
-      </view>
-
-      <scroll-view class="product-scroll" scroll-x="true" show-scrollbar="false">
-        <view class="product-list">
-          <view
-            class="product-item"
-            v-for="(item, index) in productList"
-            :key="index"
-            @click="handleProduct(item)"
-            hover-class="opacity-80"
-          >
-            <image class="product-img" :src="item.img" mode="aspectFill" />
-            <view class="product-info">
-              <text class="brand-text">{{ item.brand }}</text>
-              <text class="product-name">{{ item.name }}</text>
-              <text class="product-price">{{ item.price }}</text>
+      <!-- Grid Nav Section -->
+      <view class="grid-nav-section">
+        <scroll-view class="grid-scroll" scroll-x="true" show-scrollbar="false">
+          <view class="grid-container">
+            <view
+              class="grid-item"
+              v-for="(item, index) in navData"
+              :key="index"
+              @click="handleNav(item)"
+              hover-class="opacity-80"
+            >
+              <view class="icon-wrapper">
+                <image class="grid-icon" :src="item.icon" mode="aspectFit" />
+              </view>
+              <text class="grid-text">{{ item.name }}</text>
             </view>
           </view>
-        </view>
-      </scroll-view>
-    </view>
-
-    <!-- Section: Square Products Bottom -->
-    <view class="section-container mt-0 last-section">
-      <view class="section-header" @click="handleMore('square')">
-        <text class="section-title">Title</text>
-        <view
-          class="more-btn arrow-bg"
-          :style="{ backgroundImage: `url(${arrowBg})` }"
-          hover-class="opacity-80"
-        >
-          <image class="arrow-right-inner" :src="arrowRight" mode="aspectFit" />
-        </view>
+        </scroll-view>
       </view>
 
-      <scroll-view class="square-scroll" scroll-x="true" show-scrollbar="false">
-        <view class="square-list">
-          <view
-            class="square-item"
-            v-for="(item, index) in squareList"
-            :key="index"
-            @click="handleSquare(item)"
-            hover-class="opacity-80"
-          >
-            <image class="square-img" :src="item.img" mode="aspectFill" />
+      <!-- Banner Section -->
+      <view class="banner-section">
+        <swiper
+          class="banner-swiper"
+          :indicator-dots="true"
+          :autoplay="true"
+          :circular="true"
+          indicator-color="rgba(255,255,255,0.4)"
+          indicator-active-color="#ffffff"
+        >
+          <swiper-item v-for="(item, index) in bannerList" :key="index" @click="handleBanner(item)">
+            <view class="banner-item" hover-class="opacity-80">
+              <!-- No banner image was exported; placeholder styling applied -->
+              <view class="banner-bg"></view>
+              <text class="banner-title">{{ item.title }}</text>
+            </view>
+          </swiper-item>
+        </swiper>
+      </view>
+
+      <!-- Section: Title & Scroll List -->
+      <view class="section-container mt-32">
+        <view class="section-header" @click="handleMore('scroll')">
+          <text class="section-title">Title</text>
+          <view class="more-btn" hover-class="opacity-80">
+            <image class="arrow-right" :src="arrowRight" mode="aspectFit" />
           </view>
         </view>
-      </scroll-view>
-    </view>
 
-    <view class="safe-bottom"></view>
-  </view>
+        <scroll-view class="card-scroll" scroll-x="true" show-scrollbar="false">
+          <view class="card-list">
+            <view
+              class="card-item"
+              v-for="(item, index) in scrollList"
+              :key="index"
+              @click="handleCard(item)"
+              hover-class="opacity-80"
+            >
+              <image class="card-img" :src="item.img" mode="aspectFill" />
+              <text class="card-title">{{ item.title }}</text>
+            </view>
+          </view>
+        </scroll-view>
+      </view>
+
+      <!-- Section: Hot Products -->
+      <view class="section-container mt-32">
+        <view class="section-header" @click="handleMore('hot')">
+          <text class="section-title">Title</text>
+          <view
+            class="more-btn arrow-bg"
+            :style="{ backgroundImage: `url(${arrowBg})` }"
+            hover-class="opacity-80"
+          >
+            <image class="arrow-right-inner" :src="arrowRight" mode="aspectFit" />
+          </view>
+        </view>
+
+        <scroll-view class="product-scroll" scroll-x="true" show-scrollbar="false">
+          <view class="product-list">
+            <view
+              class="product-item"
+              v-for="(item, index) in productList"
+              :key="index"
+              @click="handleProduct(item)"
+              hover-class="opacity-80"
+            >
+              <image class="product-img" :src="item.img" mode="aspectFill" />
+              <view class="product-info">
+                <text class="brand-text">{{ item.brand }}</text>
+                <text class="product-name">{{ item.name }}</text>
+                <text class="product-price">{{ item.price }}</text>
+              </view>
+            </view>
+          </view>
+        </scroll-view>
+      </view>
+
+      <!-- Section: Square Products Bottom -->
+      <view class="section-container mt-0 last-section">
+        <view class="section-header" @click="handleMore('square')">
+          <text class="section-title">Title</text>
+          <view
+            class="more-btn arrow-bg"
+            :style="{ backgroundImage: `url(${arrowBg})` }"
+            hover-class="opacity-80"
+          >
+            <image class="arrow-right-inner" :src="arrowRight" mode="aspectFit" />
+          </view>
+        </view>
+
+        <scroll-view class="square-scroll" scroll-x="true" show-scrollbar="false">
+          <view class="square-list">
+            <view
+              class="square-item"
+              v-for="(item, index) in squareList"
+              :key="index"
+              @click="handleSquare(item)"
+              hover-class="opacity-80"
+            >
+              <image class="square-img" :src="item.img" mode="aspectFill" />
+            </view>
+          </view>
+        </scroll-view>
+      </view>
+
+      <view class="safe-bottom"></view>
+
+      <!-- 悬浮主题切换按钮(仅供测试验证) -->
+      <view class="theme-toggle-btn" @click="themeStore.toggleTheme" hover-class="opacity-80">
+        <text class="toggle-text">{{ themeStore.theme === 'dark' ? '☀️' : '🌙' }}</text>
+      </view>
+    </view>
+  </wd-config-provider>
 </template>
 
 <script setup lang="ts">
 import { ref, reactive } from 'vue'
+import { useThemeStore } from '@/store/useThemeStore'
+
+const themeStore = useThemeStore()
 
 // Local Assets
 import searchIcon from '@/static/images/home/search_icon.png'
@@ -233,10 +243,34 @@ const handleSquare = (item: any) => {
 .home-page {
   width: 750rpx;
   min-height: 100vh;
-  background-color: #ffffff;
+  background-color: var(--bg-color, #ffffff);
+  color: var(--text-color, #000000);
   display: flex;
   flex-direction: column;
   overflow-x: hidden;
+  transition:
+    background-color 0.3s,
+    color 0.3s;
+}
+
+/* 悬浮切换按钮 */
+.theme-toggle-btn {
+  position: fixed;
+  right: 40rpx;
+  bottom: 200rpx;
+  width: 80rpx;
+  height: 80rpx;
+  background-color: var(--text-color);
+  border-radius: 40rpx;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.2);
+  z-index: 999;
+}
+.toggle-text {
+  font-size: 40rpx;
+  color: var(--bg-color);
 }
 
 /* Base Interactions */
@@ -257,7 +291,7 @@ const handleSquare = (item: any) => {
 .search-box {
   width: 100%;
   height: 80rpx;
-  background-color: #f5f5f5;
+  background-color: var(--card-bg-color, #f5f5f5);
   border-radius: 16rpx;
   display: flex;
   flex-direction: row;
@@ -273,7 +307,7 @@ const handleSquare = (item: any) => {
 .search-text {
   font-family: Inter, sans-serif;
   font-size: 32rpx;
-  color: #828282;
+  color: var(--text-color-secondary, #828282);
   margin-left: 24rpx;
   flex: 1;
 }
@@ -292,7 +326,7 @@ const handleSquare = (item: any) => {
 }
 .grid-item {
   height: 64rpx;
-  border: 2rpx solid #e6e6e6;
+  border: 2rpx solid var(--border-color, #e6e6e6);
   border-radius: 12rpx;
   display: inline-flex;
   flex-direction: row;
@@ -316,7 +350,7 @@ const handleSquare = (item: any) => {
 .grid-text {
   font-family: Inter, sans-serif;
   font-size: 28rpx;
-  color: #1a1a1a;
+  color: var(--text-color, #1a1a1a);
   font-weight: 500;
   margin-left: 8rpx;
 }
@@ -346,7 +380,7 @@ const handleSquare = (item: any) => {
 .banner-title {
   font-family: Inter, sans-serif;
   font-size: 40rpx;
-  color: #000000;
+  color: var(--text-color, #000000);
   font-weight: 600;
   letter-spacing: -0.4rpx;
 }
@@ -374,7 +408,7 @@ const handleSquare = (item: any) => {
 .section-title {
   font-family: Inter, sans-serif;
   font-size: 32rpx;
-  color: #000000;
+  color: var(--text-color, #000000);
   font-weight: 600;
   letter-spacing: -0.32rpx;
 }
@@ -426,7 +460,7 @@ const handleSquare = (item: any) => {
 .card-title {
   font-family: Inter, sans-serif;
   font-size: 28rpx;
-  color: #161823;
+  color: var(--text-color, #161823);
   font-weight: 500;
   margin-top: 16rpx;
   text-align: center;
@@ -462,12 +496,12 @@ const handleSquare = (item: any) => {
 .brand-text {
   font-family: Inter, sans-serif;
   font-size: 24rpx;
-  color: #000000;
+  color: var(--text-color-secondary, #000000);
 }
 .product-name {
   font-family: Inter, sans-serif;
   font-size: 28rpx;
-  color: #000000;
+  color: var(--text-color, #000000);
   margin-top: 4rpx;
   @extend .text-ellipsis;
   width: 296rpx;
@@ -475,7 +509,7 @@ const handleSquare = (item: any) => {
 .product-price {
   font-family: Inter, sans-serif;
   font-size: 32rpx;
-  color: #000000;
+  color: var(--text-color, #000000);
   font-weight: 500;
   margin-top: 4rpx;
 }
