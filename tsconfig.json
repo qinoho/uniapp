@@ -1,13 +1,55 @@
 {
-  "extends": "@vue/tsconfig/tsconfig.json",
   "compilerOptions": {
-    "sourceMap": true,
+    /* ===== 语言与编译目标 ===== */
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "lib": [
+      "ESNext",
+      "DOM",
+      "DOM.Iterable"
+    ],
+    /* ===== Vue / JSX ===== */
+    "jsx": "preserve",
+    /* ===== 严格模式 ===== */
+    "strict": true,
+    "noImplicitThis": true,
+    /* ===== 模块互操作 ===== */
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "verbatimModuleSyntax": true,
+    /* ===== 路径别名 ===== */
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": [
+        "./src/*"
+      ]
     },
-    "lib": ["esnext", "dom"],
-    "types": ["@dcloudio/types"]
+    /* ===== 类型声明 ===== */
+    "types": [
+      "@dcloudio/types",
+      "node"
+    ],
+    /* ===== 代码质量 ===== */
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "useDefineForClassFields": true,
+    "sourceMap": true,
+    /* ===== 输出控制 (仅类型检查，不输出) ===== */
+    "noEmit": true
   },
-  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"]
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.d.ts",
+    "src/**/*.tsx",
+    "src/**/*.vue",
+    "shims-uni.d.ts",
+    "vite.config.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "unpackage"
+  ]
 }
